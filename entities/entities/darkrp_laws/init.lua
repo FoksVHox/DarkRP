@@ -3,6 +3,8 @@ AddCSLuaFile("shared.lua")
 
 include("shared.lua")
 
+util.AddNetworkString("DRP_AddLaw")
+
 local Laws = {}
 local FixedLaws = {}
 
@@ -181,10 +183,10 @@ end
 hook.Add("PlayerInitialSpawn", "SendLaws", function(ply)
     for i, law in pairs(Laws) do
         if FixedLaws[i] then continue end
-
-        umsg.Start("DRP_AddLaw", ply)
-            umsg.String(law)
-        umsg.End()
+           
+        net.Start("DRP_AddLaw")
+            net.WriteString(law)
+        net.Send(ply)
     end
 end)
 
