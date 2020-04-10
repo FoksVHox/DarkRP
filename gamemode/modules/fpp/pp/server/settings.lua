@@ -379,7 +379,7 @@ end
 
 local function RetrieveBlocked()
     MySQLite.query("SELECT * FROM FPP_BLOCKED1;", function(data)
-        if type(data) == "table" then
+        if istable(data) then
             for _, v in pairs(data) do
                 if not FPP.Blocked[v.var] then
                     ErrorNoHalt((v.var or "(nil var)") .. " blocked type does not exist! (Setting: " .. (v.setting or "") .. ")")
@@ -402,7 +402,7 @@ Only save in the database on first start
 function FPP.AddDefaultBlocked(types, classname)
     classname = string.lower(classname)
 
-    if type(types) == "string" then
+    if isstring(types) then
         defaultBlocked[types] = defaultBlocked[types] or {}
         defaultBlocked[types][classname] = true
         return
@@ -453,7 +453,7 @@ end
 
 local function RetrieveRestrictedTools()
     MySQLite.query("SELECT * FROM FPP_TOOLADMINONLY;", function(data)
-        if type(data) == "table" then
+        if istable(data) then
             for _, v in ipairs(data) do
                 FPP.RestrictedTools[v.toolname] = {}
                 FPP.RestrictedTools[v.toolname]["admin"] = tonumber(v.adminonly)
@@ -462,7 +462,7 @@ local function RetrieveRestrictedTools()
     end)
 
     MySQLite.query("SELECT * FROM FPP_TOOLRESTRICTPERSON1;", function(perplayerData)
-        if type(perplayerData) ~= "table" then return end
+        if not istable(perplayerData) then return end
         for _, v in ipairs(perplayerData) do
             FPP.RestrictedToolsPlayers[v.toolname] = FPP.RestrictedToolsPlayers[v.toolname] or {}
             FPP.RestrictedToolsPlayers[v.toolname][v.steamid] = tobool(v.allow)
@@ -483,7 +483,7 @@ end
 
 local function RetrieveGroups()
     MySQLite.query("SELECT * FROM FPP_GROUPS3;", function(data)
-        if type(data) ~= "table" then
+        if not istable(data) then
             MySQLite.query("REPLACE INTO FPP_GROUPS3 VALUES('default', 1);")
             FPP.Groups["default"] = {}
             FPP.Groups["default"].tools = {}
@@ -509,7 +509,7 @@ local function RetrieveGroups()
         end)
 
         MySQLite.query("SELECT * FROM FPP_GROUPMEMBERS1;", function(members)
-            if type(members) ~= "table" then return end
+            if not istable(members) then return end
             for _, v in ipairs(members) do
                 FPP.GroupMembers[v.steamid] = v.groupname
             end
