@@ -1,6 +1,9 @@
 # DarkRP
 A roleplay gamemode for Garry's Mod.
 
+## Changes
+This repository is using the net libary instead of the deprecated User Message Libary in Garry's Mod.
+
 ## Getting DarkRP
 Please use either git or the workshop.
 Manually downloading DarkRP or using SVN is possible, but not recommended.
