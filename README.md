@@ -3,6 +3,7 @@ A roleplay gamemode for Garry's Mod.
 
 ## Changes
 This repository is using the net libary instead of the deprecated User Message Libary in Garry's Mod.
+FPtje doesn't want to merge this in a PR, and therefore I've made this.
 
 ## Getting DarkRP
 Please use either git or the workshop.
