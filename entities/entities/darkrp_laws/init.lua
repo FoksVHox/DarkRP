@@ -59,7 +59,7 @@ local function addLaw(ply, args)
 
     local num = table.insert(Laws, args)
 
-    net.Start("DRP_RemoveLaw")
+    net.Start("DRP_AddLaw")
         net.WriteString(args)
     net.Send(ply)
 
