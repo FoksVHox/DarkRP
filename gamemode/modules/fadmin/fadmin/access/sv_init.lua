@@ -1,3 +1,5 @@
+util.AddNetworkString('FAdmin_AddPriv')
+
 --Immunity
 cvars.AddChangeCallback("_FAdmin_immunity", function(Cvar, Previous, New)
     FAdmin.SetGlobalSetting("Immunity", (tonumber(New) == 1 and true) or false)
@@ -267,7 +269,10 @@ local function AddPrivilege(ply, cmd, args)
     FAdmin.Access.Groups[group].PRIVS[priv] = true
 
     MySQLite.query("REPLACE INTO FADMIN_PRIVILEGES VALUES(" .. MySQLite.SQLStr(group) .. ", " .. MySQLite.SQLStr(priv) .. ");")
-    SendUserMessage("FAdmin_AddPriv", player.GetAll(), group, priv)
+    net.Start('FAdmin_AddPriv')
+        net.WriteString(group)
+        net.WriteString(priv)
+    net.Broadcast()
     FAdmin.Messages.SendMessage(ply, 4, "Privilege Added!")
 
     return true, group, priv
@@ -293,7 +298,10 @@ local function RemovePrivilege(ply, cmd, args)
     FAdmin.Access.Groups[group].PRIVS[priv] = nil
 
     MySQLite.query("DELETE FROM FADMIN_PRIVILEGES WHERE NAME = " .. MySQLite.SQLStr(group) .. " AND PRIVILEGE = " .. MySQLite.SQLStr(priv) .. ";")
-    SendUserMessage("FAdmin_RemovePriv", player.GetAll(), group, priv)
+    net.Start('FAdmin_RemovePriv')
+        net.WriteString(group)
+        net.WriteString(priv)
+    net.Broadcast()
     FAdmin.Messages.SendMessage(ply, 4, "Privilege Removed!")
 
     return true, group, priv

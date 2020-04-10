@@ -2,6 +2,8 @@
 -- If a player uses /afk, they go into AFK mode, they will not be autodemoted and their salary is set to $0 (you can still be killed/vote demoted though!).
 -- If a player does not use /afk, and they don't do anything for the demote time specified, they will be automatically demoted to hobo.
 
+util.AddNetworkString("blackScreen")
+
 local function AFKDemote(ply)
     local shouldDemote, demoteTeam, suppressMsg, msg = hook.Call("playerAFKDemoted", nil, ply)
     demoteTeam = demoteTeam or GAMEMODE.DefaultTeam
@@ -19,8 +21,6 @@ local function SetAFK(ply)
     local rpname = ply:getDarkRPVar("rpname")
     ply:setSelfDarkRPVar("AFK", not ply:getDarkRPVar("AFK"))
 
-    SendUserMessage("blackScreen", ply, ply:getDarkRPVar("AFK"))
-
     if ply:getDarkRPVar("AFK") then
         DarkRP.retrieveSalary(ply, function(amount) ply.OldSalary = amount end)
         ply.OldJob = ply:getDarkRPVar("job")
@@ -31,12 +31,21 @@ local function SetAFK(ply)
 
         ply:KillSilent()
         ply:Lock()
+
+    net.Start("blackScreen")
+        net.WriteBool(true)
+    net.Send(ply)
+
     else
         ply.AFKDemote = CurTime() + GAMEMODE.Config.afkdemotetime
         DarkRP.notifyAll(1, 5, DarkRP.getPhrase("player_no_longer_afk", rpname))
         DarkRP.notify(ply, 0, 5, DarkRP.getPhrase("salary_restored"))
         ply:Spawn()
         ply:UnLock()
+
+        net.Start("blackScreen")
+            net.WriteBool(false)
+        net.Send(ply)
 
         ply:SetHealth(ply.lastHealth and ply.lastHealth > 0 and ply.lastHealth or 100)
         ply.lastHealth = nil
